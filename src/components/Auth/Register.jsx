@@ -1,9 +1,23 @@
 import React from 'react';
 import { useForm } from 'react-hook-form';
+import { yupResolver } from '@hookform/resolvers/yup';
+import * as yup from 'yup';
 import axios from 'axios';
 
+const schema = yup.object().shape({
+  firstName: yup.string().required('First name is required').max(80, 'First name cannot exceed 80 characters'),
+  lastName: yup.string().required('Last name is required').max(100, 'Last name cannot exceed 100 characters'),
+  email: yup.string().required('Email is required').email('Email is invalid'),
+  password: yup.string().required('Password is required').min(6, 'Password must be at least 6 characters long'),
+  passwordConfirmation: yup.string()
+    .oneOf([yup.ref('password'), null], 'Passwords must match')
+    .required('Password confirmation is required')
+});
+
 const Register = () => {
-  const { register, handleSubmit, formState: { errors } } = useForm();
+  const { register, handleSubmit, formState: { errors } } = useForm({
+    resolver: yupResolver(schema),
+  });
 
   const onSubmit = async (data) => {
     try {
@@ -15,9 +29,10 @@ const Register = () => {
   };
 
   return (
+    <div className="flex min-h-full flex-1 flex-col justify-center px-6 py-12 lg:px-8">
+
     <form onSubmit={handleSubmit(onSubmit)}>
       <div className="space-y-12">
-        
         <div className="border-b border-gray-900/10 pb-12">
           <h2 className="text-base font-semibold leading-7 text-gray-900">Personal Information</h2>
           <p className="mt-1 text-sm leading-6 text-gray-600">Use a permanent address where you can receive mail.</p>
@@ -34,9 +49,9 @@ const Register = () => {
                   id="first-name"
                   autoComplete="given-name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("firstName", { required: true, maxLength: 80 })}
+                  {...register("firstName")}
                 />
-                {errors.firstName && <p className="mt-2 text-sm text-red-600">First name is required</p>}
+                {errors.firstName && <p className="mt-2 text-sm text-red-600">{errors.firstName.message}</p>}
               </div>
             </div>
 
@@ -51,9 +66,9 @@ const Register = () => {
                   id="last-name"
                   autoComplete="family-name"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("lastName", { required: true, maxLength: 100 })}
+                  {...register("lastName")}
                 />
-                {errors.lastName && <p className="mt-2 text-sm text-red-600">Last name is required</p>}
+                {errors.lastName && <p className="mt-2 text-sm text-red-600">{errors.lastName.message}</p>}
               </div>
             </div>
 
@@ -68,9 +83,9 @@ const Register = () => {
                   type="email"
                   autoComplete="email"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("email", { required: true, pattern: /^\S+@\S+$/i })}
+                  {...register("email")}
                 />
-                {errors.email && <p className="mt-2 text-sm text-red-600">Valid email is required</p>}
+                {errors.email && <p className="mt-2 text-sm text-red-600">{errors.email.message}</p>}
               </div>
             </div>
 
@@ -85,9 +100,9 @@ const Register = () => {
                   id="password"
                   autoComplete="new-password"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("password", { required: true, minLength: 6 })}
+                  {...register("password")}
                 />
-                {errors.password && <p className="mt-2 text-sm text-red-600">Password must be at least 6 characters long</p>}
+                {errors.password && <p className="mt-2 text-sm text-red-600">{errors.password.message}</p>}
               </div>
             </div>
 
@@ -102,11 +117,7 @@ const Register = () => {
                   id="password-confirmation"
                   autoComplete="new-password"
                   className="block w-full rounded-md border-0 py-1.5 text-gray-900 shadow-sm ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2 focus:ring-inset focus:ring-indigo-600 sm:text-sm sm:leading-6"
-                  {...register("passwordConfirmation", {
-                    required: true,
-                    validate: value =>
-                      value === getValues("password") || "Passwords do not match",
-                  })}
+                  {...register("passwordConfirmation")}
                 />
                 {errors.passwordConfirmation && <p className="mt-2 text-sm text-red-600">{errors.passwordConfirmation.message}</p>}
               </div>
@@ -125,6 +136,7 @@ const Register = () => {
         </button>
       </div>
     </form>
+    </div>
   );
 };
 
