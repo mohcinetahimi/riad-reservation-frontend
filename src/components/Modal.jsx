@@ -1,14 +1,16 @@
-import { Fragment, useState } from 'react'
-import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react'
-import { XMarkIcon } from '@heroicons/react/24/outline'
+import { Fragment, useState,useContext } from 'react';
+import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
+import { XMarkIcon } from '@heroicons/react/24/outline';
+import AddRiad from './Riad/AddRiad'; // Adjust the import path as needed
+import { OpenContext } from '../contexts/OpenContext';
 
-export default function Example() {
-  const [open, setOpen] = useState(true)
+export default function Modal({show}) {
+    const { open ,setOpen} = useContext(OpenContext);
 
   return (
-    <Transition show={open}>
-      <Dialog className="relative z-10" onClose={setOpen}>
-        <div className="fixed inset-0" />
+    <Transition show={open} as={Fragment}>
+      <Dialog className="relative z-10" onClose={() => setOpen(false)}>
+        <div className="fixed inset-0 bg-black bg-opacity-25" />
 
         <div className="fixed inset-0 overflow-hidden">
           <div className="absolute inset-0 overflow-hidden">
@@ -26,7 +28,7 @@ export default function Example() {
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                          Panel title
+                          Add New Riad
                         </DialogTitle>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -41,7 +43,9 @@ export default function Example() {
                         </div>
                       </div>
                     </div>
-                    <div className="relative mt-6 flex-1 px-4 sm:px-6">{/* Your content */}</div>
+                    <div className="relative mt-6 flex-1 px-4 sm:px-6">
+                      <AddRiad onClose={() => setOpen(false)} />
+                    </div>
                   </div>
                 </DialogPanel>
               </TransitionChild>
@@ -50,5 +54,5 @@ export default function Example() {
         </div>
       </Dialog>
     </Transition>
-  )
+  );
 }
