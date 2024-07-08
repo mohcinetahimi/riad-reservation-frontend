@@ -38,9 +38,9 @@ import {
 } from '@heroicons/react/24/outline'
 import 'react-date-range/dist/styles.css'; // main style file
 import 'react-date-range/dist/theme/default.css'; // theme css file
-import { DateRangePicker } from 'react-date-range';
+import { DateRange, DateRangePicker } from 'react-date-range';
 
-import { ChevronDownIcon } from '@heroicons/react/20/solid';
+import { ChevronDownIcon,UsersIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
 
 
@@ -122,17 +122,23 @@ export default function Home() {
 const [startDate,setStartDate] = useState(new Date());
 const [endDate,setendDate] = useState(new Date());
 
-
-const selectionRange = {
-    startDate : startDate,
-    endDate: endDate,
-    key: 'Selection'
-}
+const [state, setState] = useState([
+  {
+    startDate: new Date(),
+    endDate: new Date(),
+    key: 'selection'
+  }
+]);
 const handleSelect = (ranges) => {
-    console.log(ranges)
+    console.log(ranges.selection);
+   setState([ranges.selection]);
+   setStartDate(ranges.selection.startDate);
+   setendDate(ranges.selection.endDate);
+  console.log(endDate)
+
 }
   const [open, setOpen] = useState(false)
-
+  const [NoOfGuests,setNoOfGuests]= useState(1)
   return (
     <div className="bg-white">
       {/* Mobile menu */}
@@ -411,8 +417,9 @@ const handleSelect = (ranges) => {
                     </button>
 
                     {/* Search */}
-                    <a href="#" className="ml-2 p-2 text-gray-400 hover:text-gray-500">
+                    <a href="#" className="ml-2 p-2 text-gray-400 hover:text-gray-500 flex items-center">
                       <span className="sr-only">Search</span>
+                      <input type="text" placeholder='start your search' className='lg:hidden' />
                       <MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
                     </a>
                   </div>
@@ -428,9 +435,12 @@ const handleSelect = (ranges) => {
                   </a>
 
                   <div className="flex flex-1 items-center justify-end">
+                  <input type="text" placeholder='start your search' className='hidden lg:block rounded-full mr-3' />
                     <a href="#" className="hidden text-sm font-medium text-gray-700 hover:text-gray-800 lg:block">
                       Search
                     </a>
+                    
+                    
 
                     <div className="flex items-center lg:ml-8">
                       {/* Help */}
@@ -464,7 +474,16 @@ const handleSelect = (ranges) => {
         
         {/*search with date picker*/}
         <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-indigo-500  flex justify-center">
-            <DateRangePicker className='mx-auto' ranges={[selectionRange]} minDate={new Date()} onChange={handleSelect} />
+            <DateRange className='mx-auto flex flex-col sm:flex-row' ranges={state} minDate={new Date()}  moveRangeOnFirstSelection={false}   editableDateInputs={true}
+ onChange={handleSelect} />
+        </div>
+        <div className="flex items-center mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 text-center justify-between border-b">
+          <h2 className="text-3xl font-semibold">Number Of Guests</h2>
+          <div className='flex items-center'>
+          <UsersIcon className='h-5'></UsersIcon>
+          <input type="number" className='w-12 pl-2 text-lg outline-none focus:outline-none border border-gray-300 p-2 rounded' onChange={(e)=> setNoOfGuests(e.target.value)} value={NoOfGuests} min={1} />
+          </div>
+          
         </div>
       </header>
     </div>
