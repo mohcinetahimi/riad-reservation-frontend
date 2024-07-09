@@ -8,6 +8,7 @@ import { Routes, Route,BrowserRouter } from 'react-router-dom'
 import Home from './pages/home/Home'
 import AddRiad from './components/Riad/AddRiad'
 import {OpenProvider}  from './contexts/OpenContext'
+import Riads from './pages/Riads/Riads'
 function App() {
   const [count, setCount] = useState(0)
 
@@ -20,6 +21,7 @@ function App() {
       <Route path='/register' element={<Register />}/>
       <Route path='/login' element={<Login />}/>
       <Route path='/admin/AddRiad' element={<AddRiad/> }/>
+      <Route path ='/admin/Riads' element={<Riads/>}/>
     </Routes>
     </BrowserRouter>
     </OpenProvider>

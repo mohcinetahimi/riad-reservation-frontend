@@ -49,6 +49,7 @@ import AddRiad from '../../components/Riad/AddRiad';
 
 
 
+
 const currencies = ['CAD', 'USD', 'AUD', 'EUR', 'GBP']
 const navigation = {
   categories: [
@@ -125,6 +126,7 @@ function classNames(...classes) {
 export default function Home() {
 const [startDate,setStartDate] = useState(new Date());
 const [endDate,setendDate] = useState(new Date());
+const [ dateIsHidden,setDateIsHidden] = useState(true);
 
 const [state, setState] = useState([
   {
@@ -139,6 +141,20 @@ const handleSelect = (ranges) => {
    setStartDate(ranges.selection.startDate);
    setendDate(ranges.selection.endDate);
   console.log(endDate)
+
+}
+
+const handleFocus = ()  =>  {
+  setDateIsHidden((prev)=>{
+    console.log("hadleFocus")
+    if(prev){
+      return
+    }
+    else{
+      setDateIsHidden(true)
+    }
+  });
+  console.log(dateIsHidden)
 
 }
   const [open, setOpen] = useState(false)
@@ -423,7 +439,7 @@ const handleSelect = (ranges) => {
                     {/* Search */}
                     <a href="#" className="ml-2 p-2 text-gray-400 hover:text-gray-500 flex items-center">
                       <span className="sr-only">Search</span>
-                      <input type="text" placeholder='start your search' className='lg:hidden' />
+                      <input type="text" placeholder='start your search' className='lg:hidden' onFocus={handleFocus} />
                       <MagnifyingGlassIcon className="h-6 w-6" aria-hidden="true" />
                     </a>
                   </div>
@@ -439,7 +455,7 @@ const handleSelect = (ranges) => {
                   </a>
 
                   <div className="flex flex-1 items-center justify-end">
-                  <input type="text" placeholder='start your search' className='hidden lg:block rounded-full mr-3' />
+                  <input type="text" placeholder='start your search' className='hidden lg:block rounded-full mr-3' onFocus={handleFocus} />
                     <a href="#" className="hidden text-sm font-medium text-gray-700 hover:text-gray-800 lg:block">
                       Search
                     </a>
@@ -477,10 +493,19 @@ const handleSelect = (ranges) => {
 
         
         {/*search with date picker*/}
-        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-indigo-500  flex justify-center">
-            <DateRange className='mx-auto flex flex-col sm:flex-row' ranges={state} minDate={new Date()}  moveRangeOnFirstSelection={false}   editableDateInputs={true}
- onChange={handleSelect} />
-        </div>
+        <Transition show={!dateIsHidden} as={Fragment}>
+          <Dialog onClose={(e)=> 
+          {setDateIsHidden(true)
+          console.log("onClose",e)
+
+          }}>
+            <div className={`mx-auto max-w-7xl px-4 sm:px-6 lg:px-8 bg-indigo-500  flex justify-center ${dateIsHidden ? 'hidden' : 'block'}`}>
+             <DateRange className='mx-auto flex flex-col sm:flex-row' ranges={state} minDate={new Date()}  moveRangeOnFirstSelection={false}   editableDateInputs={true}
+ onChange={handleSelect} /> 
+
+            </div>/
+          </Dialog>
+        </Transition>
         <div className="flex items-center mx-auto max-w-2xl px-4 sm:px-6 lg:px-8 text-center justify-between border-b">
           <h2 className="text-3xl font-semibold">Number Of Guests</h2>
           <div className='flex items-center'>
@@ -490,7 +515,6 @@ const handleSelect = (ranges) => {
           
         </div>
       </header>
-      <Table></Table>
     </div>
   )
 }
