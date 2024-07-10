@@ -1,13 +1,17 @@
 import { Fragment, useState,useContext } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import AddRiad from './Riad/AddRiad'; // Adjust the import path as needed
-import { OpenContext } from '../contexts/OpenContext';
+import AddRiad from '../Riad/AddRiad'; // Adjust the import path as needed
+import { OpenContext } from '../../contexts/OpenContext';
+import EditRiad from '../Riad/EditRiad';
 
-export default function Modal({show}) {
-    const { open ,setOpen} = useContext(OpenContext);
-
+export default function ModalNew({riadId}) {
+  const [open,setOpen] = useState(false);
   return (
+ <>
+  <button onClick={()=>setOpen((prev)=> !prev)} className="text-indigo-600 hover:text-indigo-900">
+                        Edit
+      </button>
     <Transition show={open} as={Fragment}>
       <Dialog className="relative z-10" onClose={() => setOpen(false)}>
         <div className="fixed inset-0 bg-black bg-opacity-25" />
@@ -28,7 +32,7 @@ export default function Modal({show}) {
                     <div className="px-4 sm:px-6">
                       <div className="flex items-start justify-between">
                         <DialogTitle className="text-base font-semibold leading-6 text-gray-900">
-                          Add New Riad
+                          Edit Riad
                         </DialogTitle>
                         <div className="ml-3 flex h-7 items-center">
                           <button
@@ -44,7 +48,7 @@ export default function Modal({show}) {
                       </div>
                     </div>
                     <div className="relative mt-6 flex-1 px-4 sm:px-6">
-                      <AddRiad onClose={() => setOpen(false)} />
+                      <EditRiad riadId={riadId} onClose={() => setOpen(false)} />
                     </div>
                   </div>
                 </DialogPanel>
@@ -54,5 +58,6 @@ export default function Modal({show}) {
         </div>
       </Dialog>
     </Transition>
+ </>
   );
 }

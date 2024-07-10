@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { yupResolver } from '@hookform/resolvers/yup';
 import { useMutation, useQueryClient } from '@tanstack/react-query';
@@ -12,31 +12,54 @@ const schema = yup.object().shape({
   city: yup.string().required('City is required').max(100, 'City cannot exceed 100 characters'),
 });
 
-const addRiad = async (riad) => {
-  const response = await axios.post('http://localhost:3999/Riads', riad);
+const getRiadById = async (riadId) => {
+  const response = await axios.get(`http://localhost:3999/Riads/${riadId}`);
   return response.data;
 };
 
-const AddRiad = ({ onClose }) => {
-  const { register, handleSubmit, formState: { errors } } = useForm({
+const editRiad = async (riad) => {
+  const response = await axios.put(`http://localhost:3999/Riads/${riad.id}`, riad);
+  return response.data;
+};
+
+const EditRiad = ({ riadId, onClose }) => {
+  const { register, handleSubmit, setValue, formState: { errors } } = useForm({
     resolver: yupResolver(schema),
   });
 
   const queryClient = useQueryClient();
 
+  useEffect(() => {
+    const fetchRiad = async () => {
+      try {
+        const riadData = await getRiadById(riadId);
+        setValue('name', riadData.name);
+        setValue('description', riadData.description);
+        setValue('address', riadData.address);
+        setValue('city', riadData.city);
+      } catch (error) {
+        console.error('Error fetching riad data:', error);
+      }
+    };
+
+    if (riadId) {
+      fetchRiad();
+    }
+  }, [riadId, setValue]);
+
   const mutation = useMutation({
-    mutationFn: addRiad,
+    mutationFn: editRiad,
     onSuccess: () => {
       queryClient.invalidateQueries(['riads']);
       onClose();
     },
     onError: (error) => {
-      console.error('Adding riad failed:', error);
+      console.error('Editing riad failed:', error);
     }
   });
 
   const onSubmit = (data) => {
-    mutation.mutate(data);
+    mutation.mutate({ ...data, id: riadId });
   };
 
   return (
@@ -44,7 +67,7 @@ const AddRiad = ({ onClose }) => {
       <form onSubmit={handleSubmit(onSubmit)}>
         <div className="space-y-12">
           <div className="border-b border-gray-900/10 pb-12">
-            <p className="mt-1 text-sm leading-6 text-gray-600">Enter the details of the new riad below.</p>
+            <p className="mt-1 text-sm leading-6 text-gray-600">Edit the details of the riad below.</p>
 
             <div className="mt-10 grid grid-cols-1 gap-x-6 gap-y-8 sm:grid-cols-6">
               <div className="sm:col-span-3">
@@ -127,4 +150,4 @@ const AddRiad = ({ onClose }) => {
   );
 };
 
-export default AddRiad;
+export default EditRiad;

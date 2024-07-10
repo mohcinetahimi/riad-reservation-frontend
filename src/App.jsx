@@ -1,34 +1,36 @@
-import { useState } from 'react'
+import { useState } from 'react';
+import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import Register from './components/Auth/Register';
+import Login from './components/Auth/Login';
+import Example from './components/Auth/Example';
+import Home from './pages/home/Home';
+import AddRiad from './components/Riad/AddRiad';
+import { OpenProvider } from './contexts/OpenContext';
+import Riads from './pages/Riads/Riads';
+import Test from './components/Test';
+import './App.css';
 
-import Register from './components/Auth/Register'
-import Login from './components/Auth/Login'
-import Example from './components/Auth/Example'
-import './App.css'
-import { Routes, Route,BrowserRouter } from 'react-router-dom'
-import Home from './pages/home/Home'
-import AddRiad from './components/Riad/AddRiad'
-import {OpenProvider}  from './contexts/OpenContext'
-import Riads from './pages/Riads/Riads'
 function App() {
-  const [count, setCount] = useState(0)
+  const [count, setCount] = useState(0);
+  const queryClient = new QueryClient();
 
   return (
-    <>
-    <OpenProvider>
-    <BrowserRouter>
-    <Routes>
-      <Route path='/' element={<Home/>}/> 
-      <Route path='/register' element={<Register />}/>
-      <Route path='/login' element={<Login />}/>
-      <Route path='/admin/AddRiad' element={<AddRiad/> }/>
-      <Route path ='/admin/Riads' element={<Riads/>}/>
-    </Routes>
-    </BrowserRouter>
-    </OpenProvider>
-    
-    </>
-    
-  )
+    <QueryClientProvider client={queryClient}>
+      <OpenProvider>
+        <BrowserRouter>
+          <Routes>
+            <Route path='/' element={<Home />} />
+            <Route path='/register' element={<Register />} />
+            <Route path='/login' element={<Login />} />
+            <Route path='/admin/AddRiad' element={<AddRiad />} />
+            <Route path='/admin/Riads' element={<Riads />} />
+            <Route path='/test' element={<Test />} />
+          </Routes>
+        </BrowserRouter>
+      </OpenProvider>
+    </QueryClientProvider>
+  );
 }
 
-export default App
+export default App;

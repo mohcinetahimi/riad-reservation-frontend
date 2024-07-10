@@ -1,31 +1,37 @@
-import React, { useState , useContext} from 'react';
-import Modal from './Modal';
-import AddRiad from './Riad/AddRiad';
-import { OpenContext } from '../contexts/OpenContext'
-import ModalNew from './ModalNew';
+import React, { useState, useContext } from 'react';
+import { useQuery } from '@tanstack/react-query';
+import Modal from '../Modal/ModalAdd';
+import AddRiad from '../Riad/AddRiad';
+import { OpenContext } from '../../contexts/OpenContext';
+import ModalNew from '../Modal/ModalEdit';
+import axios from 'axios';
 
-
-const transactions = [
-  {
-    id: 'AAPS0L',
-    company: 'Chase & Co.',
-    share: 'CAC',
-    commission: '+$4.37',
-    price: '$3,509.00',
-    quantity: '12.00',
-    netAmount: '$4,397.00',
-  },
-  // More transactions...
-];
-
+const fetchRiads = async () => {
+  const { data } = await axios.get('http://localhost:3999/Riads');
+  return data;
+};
 
 export default function Table() {
-
   const { setOpen } = useContext(OpenContext);
+  const [search, setSearch] = useState("");
 
+  const { data: riads = [], error, isLoading } = useQuery({
+    queryKey: ['riads'],
+    queryFn: fetchRiads
+  });
+
+  if (isLoading) return <div>Loading...</div>;
+  if (error) return <div>Error loading data</div>;
 
   return (
     <div className="px-4 sm:px-6 lg:px-8">
+      <input 
+        type='text' 
+        placeholder='start your search' 
+        onChange={(e) => {
+          setSearch(e.target.value.toLowerCase());
+        }}
+      />
       <div className="sm:flex sm:items-center">
         <div className="sm:flex-auto">
           <h1 className="text-base font-semibold leading-6 text-gray-900">Riads</h1>
@@ -34,7 +40,7 @@ export default function Table() {
         <div className="mt-4 sm:ml-16 sm:mt-0 sm:flex-none">
           <button
             type="button"
-            onClick={()=> setOpen(true)}
+            onClick={() => setOpen(true)}
             className="block rounded-md bg-indigo-600 px-3 py-2 text-center text-sm font-semibold text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600"
           >
             Add
@@ -63,31 +69,19 @@ export default function Table() {
                     scope="col"
                     className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Share
+                    Description
                   </th>
                   <th
                     scope="col"
                     className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Commision
+                    Address
                   </th>
                   <th
                     scope="col"
                     className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
                   >
-                    Price
-                  </th>
-                  <th
-                    scope="col"
-                    className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Quantity
-                  </th>
-                  <th
-                    scope="col"
-                    className="whitespace-nowrap px-2 py-3.5 text-left text-sm font-semibold text-gray-900"
-                  >
-                    Net amount
+                    City
                   </th>
                   <th scope="col" className="relative whitespace-nowrap py-3.5 pl-3 pr-4 sm:pr-0">
                     <span className="sr-only">Edit</span>
@@ -95,19 +89,15 @@ export default function Table() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-gray-200 bg-white">
-                {transactions.map((transaction) => (
-                  <tr key={transaction.id}>
-                    <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{transaction.id}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">
-                      {transaction.company}
-                    </td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{transaction.share}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{transaction.commission}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{transaction.price}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{transaction.quantity}</td>
-                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{transaction.netAmount}</td>
+                {riads.filter(riad => riad.name.toLowerCase().includes(search)).map((riad) => (
+                  <tr key={riad.id}>
+                    <td className="whitespace-nowrap py-2 pl-4 pr-3 text-sm text-gray-500 sm:pl-0">{riad.id}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm font-medium text-gray-900">{riad.name}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-900">{riad.description}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{riad.address}</td>
+                    <td className="whitespace-nowrap px-2 py-2 text-sm text-gray-500">{riad.city}</td>
                     <td className="relative whitespace-nowrap py-2 pl-3 pr-4 text-right text-sm font-medium sm:pr-0">
-                     <ModalNew test={{text:"keyboard"}}></ModalNew>
+                      <ModalNew riadId={riad.id}/>
                     </td>
                   </tr>
                 ))}
@@ -116,7 +106,7 @@ export default function Table() {
           </div>
         </div>
       </div>
-      <Modal >
+      <Modal>
         <AddRiad />
       </Modal>
     </div>

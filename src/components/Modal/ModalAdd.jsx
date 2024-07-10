@@ -1,17 +1,13 @@
 import { Fragment, useState,useContext } from 'react';
 import { Dialog, DialogPanel, DialogTitle, Transition, TransitionChild } from '@headlessui/react';
 import { XMarkIcon } from '@heroicons/react/24/outline';
-import AddRiad from './Riad/AddRiad'; // Adjust the import path as needed
-import { OpenContext } from '../contexts/OpenContext';
+import AddRiad from '../Riad/AddRiad'; // Adjust the import path as needed
+import { OpenContext } from '../../contexts/OpenContext';
 
-export default function ModalNew({test}) {
-  const [open,setOpen] = useState(false);
- // alert(test.text)
+export default function Modal({show}) {
+    const { open ,setOpen} = useContext(OpenContext);
+
   return (
- <>
-  <button onClick={()=>setOpen((prev)=> !prev)} className="text-indigo-600 hover:text-indigo-900">
-                        Edit
-      </button>
     <Transition show={open} as={Fragment}>
       <Dialog className="relative z-10" onClose={() => setOpen(false)}>
         <div className="fixed inset-0 bg-black bg-opacity-25" />
@@ -58,6 +54,5 @@ export default function ModalNew({test}) {
         </div>
       </Dialog>
     </Transition>
- </>
   );
 }
