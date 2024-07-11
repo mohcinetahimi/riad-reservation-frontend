@@ -26,6 +26,7 @@ function App() {
             <Route path='/admin/AddRiad' element={<AddRiad />} />
             <Route path='/admin/Riads' element={<Riads />} />
             <Route path='/test' element={<Test />} />
+            <Route path='/*' element={<Home />}/>
           </Routes>
         </BrowserRouter>
       </OpenProvider>

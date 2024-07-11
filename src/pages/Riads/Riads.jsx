@@ -10,7 +10,7 @@ import {
   Transition,
 } from '@headlessui/react'
 import { Bars3Icon, BellIcon, XMarkIcon } from '@heroicons/react/24/outline'
-import Table from '../../components/Table'
+import Table from '../../components/Tables/RiadTable'
 
 const user = {
   name: 'Tom Cook',

@@ -42,10 +42,7 @@ import { DateRange, DateRangePicker } from 'react-date-range';
 
 import { ChevronDownIcon,UsersIcon } from '@heroicons/react/20/solid';
 import { Link } from 'react-router-dom';
-import Table from '../../components/Table';
-import Example from '../../components/Auth/Example';
 
-import AddRiad from '../../components/Riad/AddRiad';
 
 
 
